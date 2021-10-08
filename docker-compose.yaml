@@ -1,0 +1,45 @@
+---
+version: '3.8'
+
+services:  
+  internal:
+    build:
+      context: "."
+      dockerfile: Dockerfile.client
+    image: client:latest
+    networks:
+      - no-internet
+    command: ping -i 10 proxy
+    environment:
+      http_proxy: proxy:3128
+      https_proxy: proxy:3128
+      HTTP_PROXY: proxy:3128
+      HTTPS_PROXY: proxy:3128
+    
+  proxy:
+    build:
+      context: "."
+      dockerfile: Dockerfile.proxy
+    image: squid-proxy:ubuntu
+    volumes:
+    - type: bind
+      source: ${PWD}/squid4.conf
+      target: /etc/squid/squid.conf
+    command:
+    -  /usr/sbin/squid
+    - -YC
+    - -N
+    - -f
+    - /etc/squid/squid.conf
+    networks:
+      - no-internet
+      - internet
+    ports:
+    - 3128:3128
+
+networks:
+  no-internet:
+    driver: bridge
+    internal: true
+  internet:
+    driver: bridge

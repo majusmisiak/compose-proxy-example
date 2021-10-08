@@ -1,0 +1,13 @@
+FROM ubuntu:20.04
+
+ENV TZ 'Europe/Warsaw'
+
+RUN echo $TZ > /etc/timezone
+
+RUN apt-get -y update \
+    && apt-get -y upgrade
+
+RUN apt-get install -y \
+    inetutils-ping \
+    curl \
+    wget

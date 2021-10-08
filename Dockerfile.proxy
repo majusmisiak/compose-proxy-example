@@ -1,0 +1,16 @@
+FROM ubuntu:20.04
+
+ENV TZ 'Europe/Warsaw'
+
+RUN echo $TZ > /etc/timezone
+
+RUN apt-get -y update \
+    && apt-get -y upgrade
+
+RUN apt-get install -y tzdata
+
+RUN apt-get -y install squid
+
+ENV SQUID_USER=proxy
+
+ENTRYPOINT ["/usr/sbin/squid", "-YC", "-f", "/etc/squid/squid.conf"]
